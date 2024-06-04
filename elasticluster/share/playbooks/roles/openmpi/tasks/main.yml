@@ -12,6 +12,12 @@
     state: '{{ pkg_install_state }}'
   when: is_debian_compatible
 
+- name: Install OpenMPI (RHEL/CentOS 8.x)
+  package:
+    name:
+      - openmpi
+    state: '{{ pkg_install_state }}'
+  when: is_rhel8_compatible
 
 - name: Install OpenMPI (RHEL/CentOS 7.x)
   package:

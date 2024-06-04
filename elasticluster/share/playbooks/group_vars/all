@@ -1,12 +1,13 @@
 # broad OS family, used to set package manager, etc.
 is_debian_compatible: "{{ ansible_os_family == 'Debian' }}"
-is_rhel_compatible:   "{{ ansible_os_family == 'RedHat' }}"
+is_rhel_compatible:   "{{ ansible_os_family in ['RedHat', 'Rocky'] }}"
 
 # distributions by name
 is_centos: "{{ ansible_distribution in ['CentOS', 'Scientific'] }}"
 is_debian: "{{ ansible_distribution == 'Debian' }}"
 is_scientific_linux: "{{ ansible_distribution == 'Scientific' }}"
 is_ubuntu: "{{ ansible_distribution == 'Ubuntu' }}"
+is_rocky: "{{ ansible_distribution == 'Rocky' }}"
 
 is_debian_or_ubuntu: "{{ is_debian or is_ubuntu }}"
 

@@ -75,3 +75,13 @@
     - slurmd
     - slurmctld
   when: 'is_rhel7_compatible and slurm_version|float < 17.11'
+
+- name: Stop SLURM services (RHEL/Rocky 8.x)
+  service:
+    name: '{{item}}'
+    enabled: no
+    state: stopped
+  loop:
+    - slurmd
+    - slurmctld
+  when: 'is_rhel8_compatible'

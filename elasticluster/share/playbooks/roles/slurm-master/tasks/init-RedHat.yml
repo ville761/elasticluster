@@ -10,7 +10,7 @@
     slurmdbd_service_name: slurmdbd
     slurmdbd_packages:
       - slurm-slurmdbd
-  when: 'is_rhel7_compatible and slurm_version|float >= 17.11'
+  when: '(is_rhel7_compatible and slurm_version | float >= 17.11) or is_rhel8_compatible'
 
 
 - name: Set SLURM master playbook params (RHEL 7.x compatible, SLURM before 17.11)

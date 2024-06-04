@@ -152,6 +152,13 @@ if ! [ -x "$python" ]; then
                 6*) do_or_die yum install -y python2 python-simplejson ;;
             esac
             ;;
+        rocky)
+            case "$ver" in
+                8*) 
+		    do_or_die dnf module -y install python27
+		    do_or_die python2 -m pip install simplejson ;;
+            esac
+            ;;
     esac
 
 fi
@@ -170,9 +177,9 @@ if [ "$use_eatmydata" = 'yes' ]; then
         debian|ubuntu)
             env DEBIAN_FRONTEND=noninteractive apt-get install -yq eatmydata
             ;;
-        redhat|centos)
+        redhat|centos|rocky)
             case "$ver" in
-                7*)
+                7*|8*)
                     sudo yum install -y yum-plugin-copr
                     sudo yum copr enable -y loveshack/livhpc
                     ;;
