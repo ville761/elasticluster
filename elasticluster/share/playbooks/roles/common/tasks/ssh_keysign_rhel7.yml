@@ -4,6 +4,9 @@
 # but forgot to make the corresponding change to the SSH host key files
 # (for more info, see: https://github.com/elasticluster/elasticluster/issues/510#issuecomment-351832450)
 # Try to fix that.
+
+# RHEL 8 does not have the same issue with `ssh-keysign` set-UID bit
+# and SSH host key files. No action needed.
 #
 
 - name: Load info about the `ssh-keysign` executable

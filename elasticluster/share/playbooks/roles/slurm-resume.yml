@@ -14,7 +14,7 @@
     - service:
         name: slurmctld
         state: restarted
-      when: is_rhel7_compatible
+      when: is_rhel7_or_later_compatible
     - service:
         name: slurmctl
         state: restarted
@@ -42,7 +42,7 @@
     - service:
         name: slurmd
         state: restarted
-      when: is_rhel7_compatible
+      when: is_rhel7_or_later_compatible
     - service:
         name: slurm
         state: restarted

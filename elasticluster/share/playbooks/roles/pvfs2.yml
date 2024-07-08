@@ -64,9 +64,9 @@
     - shell: pvfs2-server /etc/pvfs2-fs.conf -f creates=/{{pvfs2_storage}}/collections.db
 
     - shell: cp /root/{{pvfs_src}}/examples/pvfs2-server.rc /etc/init.d/pvfs2 creates=/etc/init.d/pvfs2
-      when: is_centos
+      when: is_centos_or_rocky
     - action: file path=/etc/init.d/pvfs2 mode=755 state=file
-      when: is_centos
+      when: is_centos_or_rocky
 
     - action: copy src=pvfs2/files/pvfs2.debian.init dest=/etc/init.d/pvfs2
       when: is_debian_or_ubuntu

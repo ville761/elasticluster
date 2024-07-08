@@ -10,6 +10,7 @@ is_ubuntu: "{{ ansible_distribution == 'Ubuntu' }}"
 is_rocky: "{{ ansible_distribution == 'Rocky' }}"
 
 is_debian_or_ubuntu: "{{ is_debian or is_ubuntu }}"
+is_centos_or_rocky: "{{ is_centos or is_rocky }}"
 
 
 # Debian releases by codename

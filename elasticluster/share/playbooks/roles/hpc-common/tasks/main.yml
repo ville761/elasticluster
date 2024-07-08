@@ -37,7 +37,7 @@
       - scalapack-openmpi
       - scalapack-openmpi-devel
     state: '{{ pkg_install_state }}'
-  when: is_rhel7_compatible
+  when: is_rhel7_or_later_compatible
 
 
 - name: Install common HPC software (RHEL/CentOS 6.x)

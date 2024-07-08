@@ -14,7 +14,7 @@
 
 - name: ensure nfs service is running
   service: name=nfs state=started
-  when: is_centos
+  when: is_centos_or_rocky
 
 - name: kill-HUP sshd
   shell: pkill -HUP sbin/sshd

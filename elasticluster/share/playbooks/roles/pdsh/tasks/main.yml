@@ -15,7 +15,7 @@
       - pdsh-rcmd-ssh
       - pdsh-mod-genders
     state: '{{ pkg_install_state }}'
-  when: is_centos
+  when: is_centos_or_rocky
 
 - name: Create genders file for PDSH
   template:

@@ -30,6 +30,28 @@
       tags:
         - ipython
 
+    - name: Install PIP (Rocky)
+      action: yum name={{item}}
+      loop:
+        - gcc
+        - gcc-c++
+        - python3-pip
+        - python3-devel
+        - blas-devel
+        - lapack-devel
+      when: is_rocky
+      tags:
+        - ipython
+
+    - name: pip -> pip3 (Rocky)
+      ansible.builtin.file:
+      	src: /usr/bin/pip3
+    	dest: /usr/bin/pip
+    	state: link
+      when: is_rocky
+      tags:
+        - ipython
+
     # Note: use_mirrors=yes (default) does not work with CentOS 6.3
     # Note: ipython[all] does not seem to work.
     - name: Install ipython and commonly used Python packages

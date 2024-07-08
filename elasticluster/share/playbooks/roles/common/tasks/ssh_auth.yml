@@ -64,4 +64,4 @@
 
 - name: Fix SSH keysigning on CentOS/RHEL 7.x
   include_tasks: ssh_keysign_rhel7.yml
-  when: 'is_rhel7_or_later_compatible'
+  when: 'is_rhel7_compatible'

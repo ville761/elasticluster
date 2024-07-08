@@ -69,11 +69,11 @@
     dest='/lib/systemd/system/{{gridengine_execd_service}}.service'
     src='gridengine-execd.service.j2'
   register: create_systemd_gridengine_execd_service
-  when: is_rhel7_compatible
+  when: is_rhel7_or_later_compatible
 
 - name: Reload systemd service units (RHEL/CentOS 7.x)
   command: systemctl daemon-reload
-  when: 'is_rhel7_compatible and create_systemd_gridengine_execd_service is changed'
+  when: 'is_rhel7_or_later_compatible and create_systemd_gridengine_execd_service is changed'
 
 
 # - name: ensure cell points to the right qmaster

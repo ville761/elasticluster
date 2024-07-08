@@ -27,4 +27,12 @@
     packages:
       - iptables
       - iptables-services
-  when: is_rhel7_compatible
+  when: is_rhel7_or_later_compatible
+
+
+- name: Load configuration and service names (RHEL8-compatible)
+  set_fact:
+    packages:
+      - iptables
+      - iptables-services
+  when: is_rhel8_or_later_compatible
