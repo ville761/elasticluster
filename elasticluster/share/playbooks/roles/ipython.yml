@@ -45,9 +45,9 @@
 
     - name: pip -> pip3 (Rocky)
       ansible.builtin.file:
-      	src: /usr/bin/pip3
-    	dest: /usr/bin/pip
-    	state: link
+        src: /usr/bin/pip3
+        dest: /usr/bin/pip
+        state: link
       when: is_rocky
       tags:
         - ipython
