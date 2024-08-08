@@ -4,27 +4,55 @@
   include_tasks: 'init-{{ansible_os_family}}.yml'
 
 
-- name: Deploy NTP configuration file
-  tags:
-    - ntp
-    - time
-    - common
-  template:
-    dest: /etc/ntp.conf
-    src: etc/ntp.conf.j2
-    mode: 0444
-  notify: restart ntpd
-
-
-- name: Install NTP packages
+- name: Install time synchronization package
   tags:
     - ntp
     - time
     - common
   package:
-    name: '{{ntpd_package}}'
+    name: "{{ time_sync_package }}"
     state: '{{ pkg_install_state }}'
 
+
+# Add handlers if they don't exist
+- name: Add handlers
+  block:
+    - name: restart ntpd
+      service:
+        name: ntpd
+        state: restarted
+      when: time_sync_package == 'ntp'
+
+    - name: restart chronyd
+      service:
+        name: chronyd
+        state: restarted
+      when: time_sync_package == 'chrony'
+
+
+- name: Configure NTP servers (for NTP)
+  tags:
+    - ntp
+    - time
+    - common
+  template:
+    src: etc/ntp.conf.j2
+    dest: /etc/ntp.conf
+    mode: 0444
+  when: time_sync_package == 'ntp'
+  notify: restart ntpd
+
+- name: Configure NTP servers (for Chrony)
+  tags:
+    - ntp
+    - time
+    - common
+  template:
+    src: etc/chrony.conf.j2
+    dest: /etc/chrony.conf
+    mode: 0444
+  when: time_sync_package == 'chrony'
+  notify: restart chronyd
 
 # - name: Allow incoming NTP traffic (CentOS7)
 #   tags:
@@ -45,6 +73,6 @@
     - time
     - common
   service:
-    name='{{ntpd_service}}'
+    name='{{time_sync_service}}'
     enabled=yes
     state=started

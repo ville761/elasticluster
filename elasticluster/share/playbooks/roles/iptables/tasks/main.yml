@@ -15,6 +15,12 @@
 #                 internet* are accepted (but not from the internal
 #
 
+- name: Define iptables packages
+  set_fact:
+    iptables_packages:
+      - iptables
+      - iptables-services
+
 - name: Load distribution-specific data
   include_tasks: 'init-{{ansible_os_family}}.yml'
   tags: iptables
@@ -28,10 +34,9 @@
 
 
 - name: Install iptables packages
-  tags: iptables
   package:
-    name: '{{ packages }}'
-    state: '{{ pkg_install_state }}'
+    name: "{{ iptables_packages }}"
+    state: present
 
 
 - name: Deploy netfilter rules

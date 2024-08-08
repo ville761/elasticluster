@@ -30,3 +30,47 @@
     dest='/etc/yum.repos.d/copr-loveshack-sge.repo'
     mode=0444
   when: is_rhel_compatible
+
+- name: Download and install Raven release RPM (Rocky 8)
+  dnf:
+    name: https://pkgs.dyn.su/el8/base/x86_64/raven-release.el8.noarch.rpm
+    state: present
+    disable_gpg_check: yes
+  when: is_rocky_8
+
+- name: Ensure Raven repository is disabled by default (Rocky 8)
+  ini_file:
+    path: /etc/yum.repos.d/raven.repo
+    section: raven
+    option: enabled
+    value: "0"
+    no_extra_spaces: yes
+  when: is_rocky_8
+
+- name: Ensure Raven modular repository is disabled by default (Rocky 8)
+  ini_file:
+    path: /etc/yum.repos.d/raven.repo
+    section: raven-modular
+    option: enabled
+    value: "0"
+    no_extra_spaces: yes
+  when: is_rocky_8
+
+- name: Ensure Raven multimedia repository is disabled by default (Rocky 8)
+  ini_file:
+    path: /etc/yum.repos.d/raven.repo
+    section: raven-multimedia
+    option: enabled
+    value: "0"
+    no_extra_spaces: yes
+  when: is_rocky_8
+
+#- name: Enable Raven repo (Rocky8)
+#  tags:
+#    - gridengine
+#    - gridengine-common
+#  template:
+#    src=raven.repo.j2
+#    dest='/etc/yum.repos.d/raven.repo'
+#    mode=0444
+#  when: is_rocky_8

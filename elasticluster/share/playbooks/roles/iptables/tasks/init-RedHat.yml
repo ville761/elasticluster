@@ -28,3 +28,10 @@
       - iptables
       - iptables-services
   when: is_rhel7_compatible
+
+- name: Load configuration and service names (Rocky 8)
+  set_fact:
+    packages:
+      - iptables
+      - iptables-services
+  when: is_rocky_8

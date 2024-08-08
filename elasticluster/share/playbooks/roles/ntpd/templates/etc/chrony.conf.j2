@@ -1,0 +1,61 @@
+# THIS FILE IS CONTROLLED BY ELASTICLUSTER
+# any local modifications will be overwritten!
+
+# Allow NTP client access from local network.
+allow all
+
+# Serve time even if not synchronized to a time source.
+local stratum 10
+
+# Specify time sources.
+{% if ntp_server != [] and ansible_nodename not in ntp_server %}
+# get time from hosts of class `ntp_server`
+{% for server in ntp_server %}
+server {{server}} iburst
+{% endfor %}
+{% else %}
+# use public NTP servers
+pool 0.pool.ntp.org iburst
+pool 1.pool.ntp.org iburst
+pool 2.pool.ntp.org iburst
+pool 3.pool.ntp.org iburst
+{% endif %}
+
+# Specify peers in the cluster (if any)
+{% for host in ntp_peers|default(groups.all) %}
+{% if host not in (ntp_server + [ansible_nodename, ansible_hostname, ansible_fqdn]) %}
+peer {{host}} iburst
+{% endif %}
+{% endfor %}
+
+# Record the rate at which the system clock gains/losses time.
+driftfile /var/lib/chrony/drift
+
+# Allow the system clock to be stepped in the first three updates
+# if its offset is larger than 1 second.
+makestep 1.0 3
+
+# Enable kernel synchronization of the real-time clock (RTC).
+rtcsync
+
+# Enable hardware timestamping on all interfaces that support it.
+#hwtimestamp *
+
+# Increase the minimum number of selectable sources required to adjust
+# the system clock.
+#minsources 2
+
+# Allow NTP client access from local network.
+#allow 192.168.0.0/16
+
+# Serve time even if not synchronized to a time source.
+#local stratum 10
+
+# Specify file containing keys for NTP authentication.
+#keyfile /etc/chrony.keys
+
+# Specify directory for log files.
+logdir /var/log/chrony
+
+# Select which information is logged.
+#log measurements statistics tracking

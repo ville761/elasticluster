@@ -38,6 +38,7 @@
     regexp: '^ *{{item.path}} +'
     state: present
   loop: '{{NFS_EXPORTS}}'
+  notify: reload exports
 
 - name: Ensure portmapper is running
   tags:
@@ -47,16 +48,6 @@
     name: 'rpcbind'
     enabled: yes
     state: 'started'
-
-- name: Ensure NFS server is running (Debian 8 "jessie")
-  tags:
-    - nfs
-    - nfs-server
-  command: |
-     env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin _SYSTEMCTL_SKIP_REDIRECT=true /etc/init.d/nfs-kernel-server start
-  args:
-    chdir: '/'
-  when: 'is_debian_8'
 
 - name: Ensure NFS server is running
   tags:
@@ -116,10 +107,16 @@
     enabled: yes
   when: ansible_os_family == "RedHat"
 
-- name: Reload NFS exports file
+- name: Ensure firewalld is stopped and disabled
   tags:
     - nfs
     - nfs-server
-  command:
-    exportfs -r
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+  when: ansible_os_family == "RedHat"
 
+handlers:
+  - name: reload exports
+    command: exportfs -r

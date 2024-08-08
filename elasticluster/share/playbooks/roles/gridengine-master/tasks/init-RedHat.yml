@@ -3,6 +3,14 @@
 # Set variables for RHEL/CentOS variants
 #
 
+# install db4-utils on Rocky 8
+- name: Install db4-utils from Raven repository
+  yum:
+    name: db4-utils
+    state: present
+    enablerepo: raven
+  when: is_rocky_8
+
 - name: Set GridEngine master variables (RHEL/CentOS)
   tags:
     - gridengine

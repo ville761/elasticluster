@@ -1,7 +1,7 @@
 ---
 
-- name: Set NTPd common playbook params (RHEL/CentOS)
+- name: Set time synchronization package (RHEL/CentOS/Rocky)
   set_fact:
-    ntpd_service: ntpd
-    ntpd_package: ntp
+    time_sync_package: "{{ 'chrony' if (ansible_distribution == 'Rocky' and ansible_distribution_major_version == '8') else 'ntp' }}"
+    time_sync_service: "{{ 'chronyd' if (ansible_distribution == 'Rocky' and ansible_distribution_major_version == '8') else 'ntpd' }}"
   when: 'is_rhel_compatible'

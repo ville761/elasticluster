@@ -1,4 +1,33 @@
 ---
+- name: Check if EPEL is already configured
+  command: rpm -q epel-release
+  register: epel_check
+  changed_when: false
+  failed_when: false
+
+- name: Run EPEL fix script for Rocky Linux 8
+  script: fix_epel_rocky8.sh
+  when: 
+    - is_rocky 
+    - ansible_distribution_major_version == '8'
+    - epel_check.rc != 0
+  register: epel_fix_result
+
+- name: Display EPEL fix script output
+  debug:
+    var: epel_fix_result
+  when: 
+    - is_rocky 
+    - ansible_distribution_major_version == '8'
+    - epel_fix_result.changed
+
+# Original EPEL installation task
+- name: enable the EPEL repository (RHEL/CentOS)
+  yum:
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+    state: present
+  when: not is_rocky or epel_fix_result is failed
+
 #
 # Set up the package manager and its Ansible module for installing packages
 #
@@ -34,15 +63,16 @@
   ignore_errors: yes
   when: 'is_rhel_compatible and not is_centos'
 
-
 - name: Install Ansible `pip` module dependencies
-  yum:
-    name:
-      # Python 2
-      - python2-pip
-      - python-setuptools
-      - python-virtualenv
-
+  package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ python_packages }}"
+  vars:
+    python_packages:
+      - "{{ 'python3-setuptools' if is_rocky else 'python-setuptools' }}"
+      - "{{ 'python3-virtualenv' if is_rocky else 'python-virtualenv' }}"
+      - "{{ 'python3-pip' if is_rocky else 'python-pip' }}"
 
 - name: Upgrade all installed packages to latest version
   yum:

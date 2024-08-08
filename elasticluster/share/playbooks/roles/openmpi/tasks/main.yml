@@ -12,6 +12,12 @@
     state: '{{ pkg_install_state }}'
   when: is_debian_compatible
 
+- name: Install OpenMPI (Rocky 8)
+  package:
+    name:
+      - openmpi
+    state: '{{ pkg_install_state }}'
+  when: is_rocky_8
 
 - name: Install OpenMPI (RHEL/CentOS 7.x)
   package:
