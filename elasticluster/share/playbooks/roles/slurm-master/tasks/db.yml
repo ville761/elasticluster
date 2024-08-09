@@ -7,7 +7,16 @@
     slurm_db_python_pkg: python-mysqldb
     slurm_db_service_name: mysql
     mysql_cnf_path: '/etc/mysql/my.cnf'
-  when: 'is_debian_or_ubuntu and (is_debian_8_or_later or is_ubuntu_14_04_or_later)'
+  when: 'is_debian_or_ubuntu and (is_debian_8_or_later or is_ubuntu_14_04_or_later) and not is_ubuntu_20_04_or_later'
+
+- name: Set variables (Ubuntu 20.04)
+  set_fact:
+    slurm_db_server_name: MariaDB
+    slurm_db_server_pkg: mariadb-server
+    slurm_db_python_pkg: python3-mysqldb
+    slurm_db_service_name: mysql
+    mysql_cnf_path: '/etc/mysql/my.cnf'
+  when: 'is_ubuntu_20_04_or_later'
 
 - name: Set variables (older Debian/Ubuntu)
   set_fact:
