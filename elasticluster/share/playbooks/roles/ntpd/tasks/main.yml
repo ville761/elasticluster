@@ -15,20 +15,31 @@
 
 
 # Add handlers if they don't exist
-- name: Add handlers
-  block:
-    - name: restart ntpd
-      service:
-        name: ntpd
-        state: restarted
-      when: time_sync_package == 'ntp'
+#- name: Add handlers
+#  block:
+#    - name: restart ntpd
+#      service:
+#        name: ntpd
+#        state: restarted
+#      when: time_sync_package == 'ntp'
+#
+#    - name: restart chronyd
+#      service:
+#        name: chronyd
+#        state: restarted
+#      when: time_sync_package == 'chrony'
 
-    - name: restart chronyd
-      service:
-        name: chronyd
-        state: restarted
-      when: time_sync_package == 'chrony'
+- name: restart ntpd
+  service:
+    name: ntpd
+    state: restarted
+  when: time_sync_package == 'ntp'
 
+- name: restart chronyd
+  service:
+    name: chronyd
+    state: restarted
+  when: time_sync_package == 'chrony'
 
 - name: Configure NTP servers (for NTP)
   tags:

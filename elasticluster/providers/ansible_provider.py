@@ -357,7 +357,7 @@ class AnsibleSetupProvider(AbstractSetupProvider):
         cmd = shlex.split(self.extra_conf.get('ansible_command', 'ansible-playbook'))
         cmd += [
             ('--private-key=' + cluster.user_key_private),
-            os.path.realpath(playbook),
+            #os.path.realpath(playbook),
             ('--inventory=' + inventory_path),
         ]
 
@@ -382,22 +382,29 @@ class AnsibleSetupProvider(AbstractSetupProvider):
         if ansible_extra_args:
             cmd += shlex.split(ansible_extra_args)
 
-        # finally, append any additional arguments provided on command-line
-        for arg in extra_args:
-            # XXX: since we are going to change working directory,
-            # make sure that anything that looks like a path to an
-            # existing file is made absolute before appending to
-            # Ansible's command line.  (Yes, this is a ugly hack.)
-            if os.path.exists(arg):
-                arg = os.path.abspath(arg)
-            cmd.append(arg)
-
+        # VU: trying to change this so that the playbooks are at the very end of the command line
         with temporary_dir():
             # adjust execution environment, for the part that needs a
             # the current directory path
             cmd += [
                 '-e', ('@' + self._write_extra_vars(cluster))
             ]
+            # VU: first adding all extra args that are not file paths
+            for arg in extra_args:
+                if not os.path.exists(arg):
+                    cmd.append(arg)
+            # VU: adding the main playbook
+            cmd.append(os.path.realpath(playbook))
+            # finally, append any additional arguments provided on command-line
+            # VU: finally, adding all additional arguments that are file path, i.e., playbooks
+            for arg in extra_args:
+                # XXX: since we are going to change working directory,
+                # make sure that anything that looks like a path to an
+                # existing file is made absolute before appending to
+                # Ansible's command line.  (Yes, this is a ugly hack.)
+                if os.path.exists(arg):
+                    arg = os.path.abspath(arg)
+                    cmd.append(arg)
             # run it!
             cmdline = ' '.join(cmd)
             elasticluster.log.debug(

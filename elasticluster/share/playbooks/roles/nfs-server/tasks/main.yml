@@ -9,6 +9,20 @@
     - nfs
     - nfs-server
 
+- name: disable module blacklisting (Rocky Linux 8 in STFC Cloud)
+  file:
+    path: /etc/modprobe.d/quattor.conf
+    state: absent
+  register: result
+  when: is_rocky_8
+
+- name: reboot if module blacklist disabled for first time (Rocky Linux 8 in STFC Cloud)
+  reboot:
+    reboot_timeout: 600
+  when: 
+    - is_rocky_8
+    - result.changed
+
 - name: install NFS server software
   tags:
     - nfs

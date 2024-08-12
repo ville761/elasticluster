@@ -1,32 +1,49 @@
 ---
-- name: Check if EPEL is already configured
+- name: Check if EPEL is already configured (Rocky 8)
   command: rpm -q epel-release
   register: epel_check
   changed_when: false
   failed_when: false
+  when: is_rocky_8
 
-- name: Run EPEL fix script for Rocky Linux 8
-  script: fix_epel_rocky8.sh
+#- name: Run EPEL fix script for Rocky Linux 8
+#  script: fix_epel_rocky8.sh
+#  when: 
+#    - is_rocky 
+#    - ansible_distribution_major_version == '8'
+#    - epel_check.rc != 0
+#  register: epel_fix_result
+
+#- name: Display EPEL fix script output
+#  debug:
+#    var: epel_fix_result
+#  when: 
+#    - is_rocky 
+#    - ansible_distribution_major_version == '8'
+#    - epel_fix_result.changed
+
+- name: Enable EPEL repository (Rocky 8)
+  package:
+    name: epel-release
+    state: '{{ pkg_install_state }}'
   when: 
-    - is_rocky 
-    - ansible_distribution_major_version == '8'
+    - is_rocky_8
     - epel_check.rc != 0
-  register: epel_fix_result
 
-- name: Display EPEL fix script output
-  debug:
-    var: epel_fix_result
-  when: 
-    - is_rocky 
-    - ansible_distribution_major_version == '8'
-    - epel_fix_result.changed
+- name: Enable CRB repository (Rocky 8)
+  command: |
+    crb enable
+  when: is_rocky_8
 
 # Original EPEL installation task
 - name: enable the EPEL repository (RHEL/CentOS)
   yum:
     name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
-    state: present
-  when: not is_rocky or epel_fix_result is failed
+    state: '{{ pkg_install_state }}'
+  when: 
+    - not is_rocky_8
+    - epel_check.rc != 0
+  #when: not is_rocky or epel_fix_result is failed
 
 #
 # Set up the package manager and its Ansible module for installing packages
@@ -43,6 +60,7 @@
     get_attributes: no
     get_checksum: no
     get_mime: no
+  when: not is_rocky_8
   register: epel_repo_file
 
 
@@ -51,7 +69,9 @@
   yum:
     name: 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ansible_distribution_major_version}}.noarch.rpm'
     state: '{{ pkg_install_state }}'
-  when: 'not epel_repo_file.stat.exists'
+  when: 
+    - not is_rocky_8
+    - 'not epel_repo_file.stat.exists'
 
 
 # this is required to have packages like `lua-devel` in RHEL, which
